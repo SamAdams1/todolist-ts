@@ -17,20 +17,21 @@ h1 {
   transform: translateX(-3em); */
 
   /* margin: .5em 0; */
-  background-color: purple;
+  background-color: dodgerblue;
   /* padding: .1em 2em; */
   width: 100vw;
   /* border-radius: .5em; */
 }
 
-.todoDisplay {
-  display: flex;
-  align-items: center;
-}
+
 
 .todo {
-  background-color: darkorchid;
+  background-color: darkred;
   border-radius: .5em;
-  width: 20em;
+  /* width: 20em; */
   /* margin: .3em; */
+}
+
+.completed {
+  background-color: green;
 }
