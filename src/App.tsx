@@ -50,17 +50,14 @@ const App: FC = () => {
     
     setCompleteList([...completedList, newCompletedTodo])
   }
-  const editTodo = (todoIdToEdit: number): void => {
-
-  }
 
   return (
     <>
       <div className='header'>
         <h1>Add Todo</h1>
         <h2>Description:</h2>
-        <input type="text" id="descBox" placeholder='Enter Todo' onChange={handleEvent} value={todo}/>
-        <button onClick={addTodo}>Create</button>
+        <input type="text" id="descBox" placeholder='Enter Todo' onChange={handleEvent} value={todo} aria-label='todo-input'/>
+        <button onClick={addTodo} aria-label='createBtn'>Create</button>
 
         <div className="checkBoxes">
           <input type="checkbox" id="inProgress" defaultChecked onChange={() => setShowInProgress(!showInProgress)}/>
@@ -74,7 +71,7 @@ const App: FC = () => {
         {showInProgress &&
           <div className="inProgressTodos">
             {todoList.map((todo: ITodo, key: number) => {
-              return <Todo key={key} todo={todo} deleteTodo={deleteTodo} completeTodo={completeTodo} editTodo={editTodo}/>
+              return <Todo key={key} todo={todo} deleteTodo={deleteTodo} completeTodo={completeTodo}/>
             })}
           </div>
         }
