@@ -3,13 +3,8 @@ import './App.css'
 import { ITodo } from './interfaces'
 import Todo, { CompletedTodo } from '../components/Todo'
 import { loadConfigFromFile } from 'vite'
+/// <reference types="vite/client" />
 
-const LOREM = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate deserunt velit ducimus doloremque veritatis perferendis nulla laudantium inventore? Incidunt provident error rem quam molestiae iure odit repellat! Fugit, veniam error."
-
-// let todosList: Todo[] = [
-//   { id: 0, desc: LOREM },
-//   { id: 1, desc: LOREM },
-// ];
 
 let todosCreated = 0;
 if (localStorage.getItem("todosCreated")) {
@@ -17,6 +12,25 @@ if (localStorage.getItem("todosCreated")) {
 }else {
   localStorage.setItem("todosCreated", todosCreated.toString())
 }
+
+function triggerHMRUpdate() {
+  const socket = new WebSocket(`http://localhost:5173/`);
+
+  socket.addEventListener('open', () => {
+    socket.send(JSON.stringify({ type: 'custom:update' }));
+  });
+
+  socket.addEventListener('message', (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === 'full-reload') {
+      window.location.reload();
+      console.log("hmr")
+
+    }
+  });
+}
+
+
 
 const App: FC = () => {
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
@@ -41,16 +55,21 @@ const App: FC = () => {
       // console.log(localTodos)
       let todoSaved = localTodos.split(SPLITVAL)
       for (let index = 0; index < todoSaved!.length; index+=1) {
-        const idk = todoSaved[index]
-        createTodo(idk)
+        const todoFromStorg = todoSaved[index]
+        if (!todoList.find((element) => element.desc == todoFromStorg)) {
+          createTodo(todoFromStorg, index)
+          triggerHMRUpdate()
+        }
       }
-      setTodoDesc('');
+      
       // console.log(todosCreated)
       console.log(localStorage)
     }
   }
-  function setLocalStorage() {
+
+  const setLocalStorage = () => {
     if (localStorage.getItem("todos")) {
+      // this way bypasses json.stringify async
       localStorage.setItem("todos", localStorage.getItem("todos") + SPLITVAL + todo)
     } else {
       localStorage.setItem("todos", todo)
@@ -58,8 +77,8 @@ const App: FC = () => {
     console.log(localStorage)
   }
 
-  const createTodo = (value: string):void => {
-    const newTodo = { id: todosCreated, desc: value, complete: false};
+  const createTodo = (value: string, id:number):void => {
+    const newTodo = { id: id, desc: value, complete: false};
     setTodoList([...todoList, newTodo]);
     console.log(value, todoList)
     setTodoDesc('');
@@ -71,7 +90,7 @@ const App: FC = () => {
       todosCreated += 1;
       localStorage.setItem("todosCreated", todosCreated.toString())
       setLocalStorage()
-      createTodo(todo)
+      createTodo(todo, todosCreated)
 
     } else {
       console.log("todo must have a description");
@@ -115,6 +134,7 @@ const App: FC = () => {
           <input type="checkbox" id="completed" defaultChecked onChange={() => setShowCompleted(!showCompleted)}/>
           <label htmlFor="completed"> Completed </label>
         </div>
+        <button onClick={triggerHMRUpdate}>Trigger HMR Update</button>
       </div>
 
       <div className="todoList" key="shutupstupidconsole">

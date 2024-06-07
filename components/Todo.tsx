@@ -25,21 +25,21 @@ function Todo( { todo, deleteTodo, completeTodo }: Props) {
 
   return (
     <div className="todo" data-testid={'todo'} key={todo.id}>
-    {!showEditor ? (
-      <>
-        <h3>{todo.desc} | {todo.id}</h3>
-        <button onClick={() => completeTodo(todo.id)} aria-label={'completeBtn'}>Complete</button>
-        <button onClick={() => deleteTodo(todo.id)} aria-label={'deleteBtn'}>Delete</button>
-        <button onClick={() => setShowEditor(true)}>Edit</button>
-      </>
-    ) : (
-      <>
-        <input type="text" defaultValue={todo.desc} onChange={handleEvent}/>
-        <p></p>
-        <button onClick={saveChange}>Save</button>
+      {!showEditor ? (
+        <>
+          <h3>{todo.desc} | {todo.id}</h3>
+          <button onClick={() => completeTodo(todo.id)} aria-label={'completeBtn'}>Complete</button>
+          <button onClick={() => deleteTodo(todo.id)} aria-label={'deleteBtn'}>Delete</button>
+          <button onClick={() => setShowEditor(true)}>Edit</button>
+        </>
+      ) : (
+        <>
+          <input type="text" defaultValue={todo.desc} onChange={handleEvent}/>
+          <p></p>
+          <button onClick={saveChange}>Save</button>
 
-      </>
-    )}
+        </>
+      )}
     </div>
   )
 }
