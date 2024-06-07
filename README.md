@@ -30,6 +30,7 @@ This design decision will of course have consequences in how you test your app.
 **Submission**: Share your public GitLab repo with Sarah via email to submit.
 
 rfce
+rafce
 
 https://github.com/r5n-dev/vscode-react-javascript-snippets/blob/HEAD/docs/Snippets.md
 https://www.youtube.com/watch?v=4WltCTAy9QI

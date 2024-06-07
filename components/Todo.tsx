@@ -45,13 +45,16 @@ function Todo( { todo, deleteTodo, completeTodo }: Props) {
 }
 
   
-interface CompleteProps {todo: ITodo; deleteTodo(todoIdToDelete: number): void;}
+interface CompleteProps {
+  todo: ITodo; 
+  deleteTodo(todoIdToDelete: number): void;
+}
 export const CompletedTodo = ( {todo , deleteTodo}: CompleteProps ) => {
   return (
     <>
     <div className="todo completed">
       <h2>{todo.desc}</h2>
-      <button onClick={() => deleteTodo(todo.id)}>X</button>
+      {/* <button onClick={() => deleteTodo(todo.id)}>X</button> */}
       <h3></h3>
     </div>
     </>
