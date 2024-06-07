@@ -18,15 +18,16 @@ function Todo( { todo, deleteTodo, completeTodo }: Props) {
   const saveChange = ():void => {
     if (newDesc !== '') {
       todo.desc = newDesc
+      localStorage.setItem(todo.id.toString(), todo.desc)
     }
     setShowEditor(false)
   }
 
   return (
-    <div className="todo" data-testid={'todo'}>
+    <div className="todo" data-testid={'todo'} key={todo.id}>
     {!showEditor ? (
       <>
-        <h3>{todo.desc}</h3>
+        <h3>{todo.desc} | {todo.id}</h3>
         <button onClick={() => completeTodo(todo.id)} aria-label={'completeBtn'}>Complete</button>
         <button onClick={() => deleteTodo(todo.id)} aria-label={'deleteBtn'}>Delete</button>
         <button onClick={() => setShowEditor(true)}>Edit</button>
@@ -43,13 +44,15 @@ function Todo( { todo, deleteTodo, completeTodo }: Props) {
   )
 }
 
-interface CompleteProps {todo: ITodo}
-export const CompletedTodo = ( {todo}: CompleteProps ) => {
+  
+interface CompleteProps {todo: ITodo; deleteTodo(todoIdToDelete: number): void;}
+export const CompletedTodo = ( {todo , deleteTodo}: CompleteProps ) => {
   return (
     <>
     <div className="todo completed">
       <h2>{todo.desc}</h2>
-      <h3>{todo.status}</h3>
+      <button onClick={() => deleteTodo(todo.id)}>X</button>
+      <h3></h3>
     </div>
     </>
   )

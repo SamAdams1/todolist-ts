@@ -2,6 +2,7 @@ import React, { useState, useEffect, FC, ChangeEvent } from 'react'
 import './App.css'
 import { ITodo } from './interfaces'
 import Todo, { CompletedTodo } from '../components/Todo'
+import { loadConfigFromFile } from 'vite'
 
 const LOREM = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate deserunt velit ducimus doloremque veritatis perferendis nulla laudantium inventore? Incidunt provident error rem quam molestiae iure odit repellat! Fugit, veniam error."
 
@@ -10,7 +11,12 @@ const LOREM = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupidita
 //   { id: 1, desc: LOREM },
 // ];
 
-let todosCreated = 0
+let todosCreated = 0;
+if (localStorage.getItem("todosCreated")) {
+  todosCreated = Number(localStorage.getItem("todosCreated"))
+}else {
+  localStorage.setItem("todosCreated", todosCreated.toString())
+}
 
 const App: FC = () => {
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
@@ -18,38 +24,82 @@ const App: FC = () => {
 
   const [todo, setTodoDesc] = useState<string>('');
   const [todoList, setTodoList] = useState<ITodo[]>([]);
-  const [completedList, setCompleteList] = useState<ITodo[]>([]);
 
 
   const handleEvent = (event: ChangeEvent<HTMLInputElement>): void => {
     setTodoDesc(event.target.value);
   };
 
-  const addTodo = ():void => {
-    if (todo !== '') {
-      const newTodo = { id: todosCreated+=1, desc: todo, status: "incomplete"};
-      setTodoList([...todoList, newTodo]);
+  useEffect(() => {
+    getTodosFromStorage();
+  }, []);
+  
+  const SPLITVAL = "/|/"
+  const getTodosFromStorage = ():void => {
+    const localTodos = localStorage.getItem("todos")
+    if (localTodos && localTodos != null) {
+      // console.log(localTodos)
+      let todoSaved = localTodos.split(SPLITVAL)
+      for (let index = 0; index < todoSaved!.length; index+=1) {
+        const idk = todoSaved[index]
+        createTodo(idk)
+      }
       setTodoDesc('');
-      // console.log(todoList);
+      // console.log(todosCreated)
+      console.log(localStorage)
+    }
+  }
+  function setLocalStorage() {
+    if (localStorage.getItem("todos")) {
+      localStorage.setItem("todos", localStorage.getItem("todos") + SPLITVAL + todo)
+    } else {
+      localStorage.setItem("todos", todo)
+    }
+    console.log(localStorage)
+  }
+
+  const createTodo = (value: string):void => {
+    const newTodo = { id: todosCreated, desc: value, complete: false};
+    setTodoList([...todoList, newTodo]);
+    console.log(value, todoList)
+    setTodoDesc('');
+    // console.log(todo)
+  }
+
+  const registerTodo = ():void => {
+    if (todo !== '') {
+      todosCreated += 1;
+      localStorage.setItem("todosCreated", todosCreated.toString())
+      setLocalStorage()
+      createTodo(todo)
+
     } else {
       console.log("todo must have a description");
     }
   }
 
+
+  
   const deleteTodo = (todoIdToDelete: number): void => {
     setTodoList(todoList.filter((todo) => {
       return todo.id != todoIdToDelete;
     }))
   }
+
   const completeTodo = (todoIdToComplete: number): void => {
     const newCompletedTodo = todoList.filter((todo) => {
       return todo.id == todoIdToComplete;
     })[0];
+    // console.log(newCompletedTodo)
     deleteTodo(newCompletedTodo.id)
-    newCompletedTodo.status = 'completed'
+    newCompletedTodo.complete = true
     
-    setCompleteList([...completedList, newCompletedTodo])
+    setTodoList([...todoList])
+    // localStorage.removeItem(newCompletedTodo.id.toString())
+    // console.log(todoList)
+
   }
+
 
   return (
     <>
@@ -57,7 +107,7 @@ const App: FC = () => {
         <h1>Add Todo</h1>
         <h2>Description:</h2>
         <input type="text" id="descBox" placeholder='Enter Todo' onChange={handleEvent} value={todo} aria-label='todo-input'/>
-        <button onClick={addTodo} aria-label='createBtn'>Create</button>
+        <button onClick={registerTodo} aria-label='createBtn'>Create</button>
 
         <div className="checkBoxes">
           <input type="checkbox" id="inProgress" defaultChecked onChange={() => setShowInProgress(!showInProgress)}/>
@@ -67,22 +117,23 @@ const App: FC = () => {
         </div>
       </div>
 
-      <div className="todoList">
-        {showInProgress &&
-          <div className="inProgressTodos">
-            {todoList.map((todo: ITodo, key: number) => {
-              return <Todo key={key} todo={todo} deleteTodo={deleteTodo} completeTodo={completeTodo}/>
-            })}
-          </div>
-        }
-        { showCompleted && 
-        <div className="completeTodos">
-            {completedList.map((todo: ITodo, key: number) => {
-              return <CompletedTodo todo={todo} key={key}/>
-            })}
-        </div>
-        }
+      <div className="todoList" key="shutupstupidconsole">
+        { todoList.map((todo: ITodo, key: number) => {
+          return (todo.complete == true ? (
+            <>
+              { showCompleted && 
+                <CompletedTodo todo={todo} key={key}  deleteTodo={deleteTodo} />
+              }
+            </>
+          ) : ( 
+            <>
 
+              { showInProgress && 
+                <Todo key={key} todo={todo} deleteTodo={deleteTodo} completeTodo={completeTodo}/>
+              }
+            </>
+          )
+        )})}
       </div>
 
     </>
