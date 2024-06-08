@@ -3,7 +3,6 @@ import './App.css'
 import { ITodo } from './interfaces'
 import Todo, { CompletedTodo } from '../components/Todo'
 
-
 const getLocalItems = () => {
   let list = localStorage.getItem("todos")
   console.log(list)
@@ -14,13 +13,13 @@ const getLocalItems = () => {
     return []
   }
 }
+
 let todosCreated = 0;
 if (localStorage.getItem("todosCreated")) {
   todosCreated = Number(localStorage.getItem("todosCreated"))
-}else {
+} else {
   localStorage.setItem("todosCreated", todosCreated.toString())
 }
-
 
 const App: FC = () => {
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
@@ -30,31 +29,20 @@ const App: FC = () => {
   const [todoList, setTodoList] = useState<ITodo[]>(getLocalItems);
   const [completeList, setCompleteList] = useState<ITodo[]>([]);
 
-
   const handleEvent = (event: ChangeEvent<HTMLInputElement>): void => {
     setTodoDesc(event.target.value);
   };
 
+  // Update local storage whenever TODOs change
   useEffect(() => {
-    // getTodoFromStorage();
-  }, []);
-  
-  const getTodoFromStorage = ():void => {
-      // for (let index = 0; index <= localStorage.todosCreated; index+=1) {
-      //   const todoFromStorg = localStorage[index]
-      //   if (!todoList.find((element) => element.desc == todoFromStorg) && todoFromStorg) {
-      //     createTodo(todoFromStorg, index)
-      // }
-      // console.log(todosCreated)
-      // console.log(localStorage)
-    // }
-    const lastCreatedTodo = localStorage.lastCreated;
-    if (!todoList.find((element) => element.desc == lastCreatedTodo) && lastCreatedTodo) {
-      createTodo(lastCreatedTodo)
-    }
-  }
+    localStorage.setItem('todos', JSON.stringify(todoList));
+  }, [todoList]);
+  useEffect(() => {
+    localStorage.setItem('todosCreated', todosCreated.toString());
+  }, [todosCreated]);
+
   const createTodo = (value: string):void => {
-    const newTodo = { id: todosCreated, desc: value, complete: false};
+    const newTodo = { id: todosCreated, desc: todo, complete: false};
     setTodoList([...todoList, newTodo]);
     console.log(value, todoList)
     // console.log(localStorage)
@@ -62,54 +50,43 @@ const App: FC = () => {
     // console.log(todo)
   }
 
-  const registerTodo = async ():Promise<void> => {
+  const registerTodo = ():void => {
     if (todo !== '') {
       todosCreated += 1;
-      localStorage.setItem("lastCreated", todo)
-      localStorage.setItem("todosCreated", todosCreated.toString())
-      // setLocalStorage()
       createTodo(todo)
-      console.log(todosCreated)
-      localStorage.setItem("todos", todoList.join("|"))
-
     } else {
       console.log("todo must have a description");
     }
   }
-  
+
+
   const deleteTodo = (todoIdToDelete: number): void => {
     setTodoList(todoList.filter((todo) => {
       return todo.id != todoIdToDelete;
     }))
-    // resetState()
   }
 
   const completeTodo = (todoIdToComplete: number): void => {
     const newCompletedTodo = todoList.filter((todo) => {
       return todo.id == todoIdToComplete;
     })[0];
-    // console.log(newCompletedTodo)
     deleteTodo(newCompletedTodo.id)
     newCompletedTodo.complete = true
     
     setCompleteList([...completeList, newCompletedTodo])
     localStorage.setItem("todos", JSON.stringify(todoList))
-    // console.log(todoList)
-
   }
-  
-//"[{"id":1,"desc":"a","complete":false},{"id":2,"desc":"b","complete":false},{"id":3,"desc":"c","complete":false}]"
-  const resetState = () => {
-    todosCreated += 1
-    createTodo("idk")
-    // deleteTodo(0)
-    todosCreated -= 1
-    localStorage.setItem("lastCreated", todo)
-    localStorage.setItem("todosCreated", todosCreated.toString())
-    localStorage.setItem("todos", JSON.stringify(todoList))
 
-    console.log("resetting...")
+  const editTodo = (todoIdToEdit: number, desc: string): void => {
+    for (let index = 0; index < todoList.length; index++) {
+      const todo = todoList[index];
+      if (todo.id == todoIdToEdit) {
+        todo.desc = desc
+        setTodoList([...todoList])
+      }
+    }
   }
+
   return (
     <>
       <div className='header'>
@@ -124,9 +101,8 @@ const App: FC = () => {
           <input type="checkbox" id="completed" defaultChecked onChange={() => setShowCompleted(!showCompleted)}/>
           <label htmlFor="completed"> Completed </label>
         </div>
-        <button onClick={() => localStorage.clear()}>CLEAR local storage</button>
-        <button onClick={() => console.log(localStorage)}>PRINT local storage</button>
-        <button onClick={() => resetState()}>resetState</button>
+        {/* <button onClick={() => localStorage.clear()}>CLEAR local storage</button>
+        <button onClick={() => console.log(localStorage)}>PRINT local storage</button> */}
       </div>
 
       <div className="todoList" key="shutupstupidconsole">
@@ -143,7 +119,7 @@ const App: FC = () => {
           return (
             <>
               { showInProgress &&
-                <Todo key={key} todo={todo} deleteTodo={deleteTodo} completeTodo={completeTodo}/>
+                <Todo key={key} todo={todo} deleteTodo={deleteTodo} completeTodo={completeTodo} editTodo={editTodo}/>
               }
             </>
           )

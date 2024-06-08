@@ -5,20 +5,19 @@ interface Props {
   todo: ITodo;
   deleteTodo(todoIdToDelete: number): void;
   completeTodo(todoIdToComplete: number): void;
+  editTodo(todoIdToEdit: number, desc: string): void;
 }
 
-function Todo( { todo, deleteTodo, completeTodo }: Props) {
+function Todo( { todo, deleteTodo, completeTodo, editTodo }: Props) {
   const [showEditor, setShowEditor] = useState<boolean>(false);
   const [newDesc, setNewDesc] = useState<string>('');
-
 
   const handleEvent = (event: ChangeEvent<HTMLInputElement>):void => {
     setNewDesc(event.target.value)
   }
   const saveChange = ():void => {
     if (newDesc !== '') {
-      todo.desc = newDesc
-      localStorage.setItem(todo.id.toString(), todo.desc)
+      editTodo(todo.id, newDesc)
     }
     setShowEditor(false)
   }
@@ -27,7 +26,7 @@ function Todo( { todo, deleteTodo, completeTodo }: Props) {
     <div className="todo" data-testid={'todo'} key={todo.id}>
       {!showEditor ? (
         <>
-          <h3>{todo.desc} | {todo.id}</h3>
+          <h3>{todo.desc}</h3>
           <button onClick={() => completeTodo(todo.id)} aria-label={'completeBtn'}>Complete</button>
           <button onClick={() => deleteTodo(todo.id)} aria-label={'deleteBtn'}>Delete</button>
           <button onClick={() => setShowEditor(true)}>Edit</button>
