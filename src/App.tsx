@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC, ChangeEvent } from 'react'
+import { useState, useEffect, FC, ChangeEvent } from 'react'
 import './App.css'
 import { ITodo } from './interfaces'
 import Todo, { CompletedTodo } from '../components/Todo'
@@ -110,7 +110,7 @@ const App: FC = () => {
           return (
             <>
               { showCompleted &&
-                <CompletedTodo todo={todo} key={index}  deleteTodo={deleteTodo} />
+                <CompletedTodo todo={todo} key={index} />
               }
             </>
           )

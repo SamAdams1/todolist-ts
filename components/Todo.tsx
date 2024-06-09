@@ -46,9 +46,9 @@ function Todo( { todo, deleteTodo, completeTodo, editTodo }: Props) {
   
 interface CompleteProps {
   todo: ITodo; 
-  deleteTodo(todoIdToDelete: number): void;
+  // deleteTodo(todoIdToDelete: number): void;
 }
-export const CompletedTodo = ( {todo , deleteTodo}: CompleteProps ) => {
+export const CompletedTodo = ( {todo}: CompleteProps ) => {
   return (
     <>
     <div className="todo completed">
