@@ -22,16 +22,11 @@ You are expected to satisfy these minimum viable requirements for a functional "
 At least one of these features must be tested.
 
 Notice the absence of any backend requirements.
-You can choose to create a backend to persist Todos, or you can handle persistence using client side storage.
+You can choose to create a backend to persist Todos, or you can handle persistence using client-side storage.
 This design decision will of course have consequences in how you test your app.
 
-### The competency-based option for assessment is a **HIGHER** standard than the participation option, because it _requires achieving functional features_ with our new tools rather than participating in the labs where you are merely required to engage with the tools.
+### The competency-based option for assessment is a **HIGHER** standard than the participation option because it _requires achieving functional features_ with our new tools rather than participating in the labs where you are merely required to engage with the tools.
 
 **Submission**: Share your public GitLab repo with Sarah via email to submit.
 
-rfce
-rafce
 
-https://github.com/r5n-dev/vscode-react-javascript-snippets/blob/HEAD/docs/Snippets.md
-https://www.youtube.com/watch?v=4WltCTAy9QI
-https://www.youtube.com/watch?v=G-4zgIPsjkU
